@@ -1,0 +1,9 @@
+@import "../../styles.scss";
+
+.posts{
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    padding: 30px;
+   
+}
