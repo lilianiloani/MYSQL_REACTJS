@@ -88,9 +88,7 @@ export const updatePost = (req, res) => {
       ], (err, data) => {
         if (err) res.status(500).json(err);
         return res.status(200).json(data);
-      
-        /*    if (data.affectedRows > 0)  return  res.json("Updated!");  
-        return res.status(403).json("You can update only your post!"); */
+  
       }
     );
   });

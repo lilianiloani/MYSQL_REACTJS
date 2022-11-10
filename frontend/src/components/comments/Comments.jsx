@@ -33,8 +33,8 @@ const Comments = ({postId}) => {
   );
 
    const deleteMutation = useMutation(
-    (postId) => {
-      return makeRequest.delete("/comments/" + postId);
+    (id) => {
+      return makeRequest.delete("/comments/" + id);
     },
     {
       onSuccess: () => {

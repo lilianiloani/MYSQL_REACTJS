@@ -69,9 +69,9 @@ export const deleteComment = (req, res) => {
     if (err) return res.status(403).json("Token is not valid!");
     const commentId = req.params.id;
     const q =
-      "DELETE FROM comments WHERE `id`=? AND `userId` = ?";
+      "DELETE FROM comments WHERE `id`=?";
 
-    db.query(q, [commentId, userInfo.id], (err, data) => {
+    db.query(q, [commentId], (err, data) => {
       if (err) return res.status(500).json(err);
       if(data.affectedRows>0) return res.status(200).json("comment has been deleted.");
       return res.status(403).json("You can delete only your comment")
