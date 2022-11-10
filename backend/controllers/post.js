@@ -77,12 +77,14 @@ export const updatePost = (req, res) => {
  console.log("handling request", req.body)
     const q =
   
-      "UPDATE posts SET `desc`=?,`img`=?, WHERE `id` =? AND `userId` = ?";
+      "UPDATE posts SET `desc`=?,`img`=? WHERE `id` =?";
     db.query(q,
       [
         req.body.desc,
-        req.body.img, 
-         userInfo.id, 
+        req.body.img,
+        req.body.id,
+        //userInfo.id, 
+         
       ], (err, data) => {
         if (err) res.status(500).json(err);
         return res.status(200).json(data);

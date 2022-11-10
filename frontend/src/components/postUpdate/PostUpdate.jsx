@@ -43,7 +43,7 @@ const PostUpdate = ({setUpdateOpen, post}) => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["post"]);
+        queryClient.invalidateQueries(["posts"]);
       },
     }
   );
@@ -68,7 +68,6 @@ const PostUpdate = ({setUpdateOpen, post}) => {
     setUpdateOpen(false);
      setImg(null);
      setFile(null);
-    /*  setId(post.id); */
     
   };
   return (

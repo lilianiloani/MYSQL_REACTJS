@@ -49,7 +49,7 @@ export default function Post({ post }) {
     }
   );
 
-  const updateMutation = useMutation(
+   /*  const updateMutation = useMutation(
     (postId) => {
       return makeRequest.put("/posts", postId);
     },
@@ -58,7 +58,18 @@ export default function Post({ post }) {
         queryClient.invalidateQueries(["posts"]);
       },
     }
-  );
+  );   */
+
+  const updateMutation = useMutation(
+    (post) => {
+      return makeRequest.put("/posts/"+post.id, post); 
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["posts"]);
+      },
+    }
+  );  
 
   const handleLike = () => {
     mutation.mutate(data.includes(currentUser.id));
