@@ -132,7 +132,8 @@ export default function Post({ post }) {
         </div>
         {commentOpen && <Comments postId={post.id} />}
       </div>
-      {updateOpen && <PostUpdate setUpdateOpen={setUpdateOpen} post={data} />}
+      {updateOpen && <PostUpdate setUpdateOpen={setUpdateOpen} post={post} />}
+    
     </div>
   );
 }

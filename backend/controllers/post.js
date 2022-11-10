@@ -68,35 +68,31 @@ export const deletePost = (req, res) => {
 };
 
 export const updatePost = (req, res) => {
+  console.log("handling request", req.body)
    const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not authenticated!");
 
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
- 
+ console.log("handling request", req.body)
     const q =
   
-      "UPDATE posts SET `desc`=?,`img`=?, WHERE id=?";
+      "UPDATE posts SET `desc`=?,`img`=?, WHERE `id` =? AND `userId` = ?";
     db.query(q,
       [
         req.body.desc,
         req.body.img, 
-        moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-        userInfo.id,
+         userInfo.id, 
       ], (err, data) => {
         if (err) res.status(500).json(err);
-         if (data.affectedRows > 0) return res.json("Updated!");  
-        return res.status(403).json("You can update only your post!");
+        return res.status(200).json(data);
+      
+        /*    if (data.affectedRows > 0)  return  res.json("Updated!");  
+        return res.status(403).json("You can update only your post!"); */
       }
     );
   });
 };
 
 
- /* [
-        req.body.desc,
-        req.body.img,
-        moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-        userInfo.id,
-      ],
-      (err, data) */
+ 

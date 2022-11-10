@@ -6,14 +6,17 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 //import { AuthContext } from "../../context/authContext";
 
 const PostUpdate = ({setUpdateOpen, post}) => {
-  //const { currentUser } = useContext(AuthContext);
+  console.log(post)
+ 
    const [img, setImg] = useState(); 
    const [file, setFile] = useState(); 
-  const [texts, setTexts] = useState({
+  
+   const [texts, setTexts] = useState({
     desc: post.desc,
      
-  });
-   
+  }); 
+ 
+  
   const upload = async (file) => {
     console.log(file);
     try {
@@ -32,15 +35,10 @@ const PostUpdate = ({setUpdateOpen, post}) => {
 
   const queryClient = useQueryClient();
   
-   /* const { isLoading, data } = useQuery(["posts", post.id], () =>
-    makeRequest.get("/posts?postId=" + post).then((res) => {
-      return res.data;
-    })
-  );  */
-
   const mutation = useMutation(
     (post) => {
-      return makeRequest.put("/posts/", post); 
+      console.log(post)
+      return makeRequest.put("/posts/"+post.id, post); 
       
     },
     {
@@ -60,7 +58,8 @@ const PostUpdate = ({setUpdateOpen, post}) => {
      let imgUrl;
   
     imgUrl = file ? await upload(img) : post.img;
-    mutation.mutate({
+    mutation.mutate({ 
+      id:post.id,
       ...texts,
       img: imgUrl,
      
@@ -69,6 +68,7 @@ const PostUpdate = ({setUpdateOpen, post}) => {
     setUpdateOpen(false);
      setImg(null);
      setFile(null);
+    /*  setId(post.id); */
     
   };
   return (
