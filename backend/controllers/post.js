@@ -65,13 +65,12 @@ export const deletePost = (req, res) => {
 };
 
 export const updatePost = (req, res) => {
-  console.log("handling request", req.body);
   const token = req.cookies.accessToken;
   if (!token) return res.status(401).json("Not authenticated!");
 
   jwt.verify(token, "secretkey", (err, userInfo) => {
     if (err) return res.status(403).json("Token is not valid!");
-    console.log("handling request", req.body);
+   
     const q = "UPDATE posts SET `desc`=?,`img`=? WHERE `id` =?";
     db.query(q, [req.body.desc, req.body.img, req.body.id], (err, data) => {
       if (err) res.status(500).json(err);

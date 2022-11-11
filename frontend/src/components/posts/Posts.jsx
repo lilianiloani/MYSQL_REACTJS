@@ -8,6 +8,7 @@ export default function Posts({ userId }) {
     makeRequest.get("/posts?userId=" + userId).then((res) => {
       return res.data;
     })
+   
   );
   return (
     <div className="posts">

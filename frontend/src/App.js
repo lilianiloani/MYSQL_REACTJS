@@ -82,10 +82,6 @@ function App() {
       element: <Register />,
     },
     {
-      path: "/admin",
-      element: <Admin />,
-    },
-    {
       path: "/linkpage",
       element: <Linkpage />,
     },
