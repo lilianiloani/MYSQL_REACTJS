@@ -11,8 +11,6 @@ import LeftBar from "./components/leftBar/LeftBar";
 import RightBar from "./components/rightBar/RightBar";
 import Profile from "./pages/profile/Profile";
 import Home from "./pages/home/Home";
-import Admin from "./pages/admin/Admin";
-import Linkpage from "./pages/linkpage/Linkpage";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
@@ -67,10 +65,6 @@ function App() {
           path: "/profile/:id",
           element: <Profile />,
         },
-        {
-          path: "/admin/:id",
-          element: <Admin />,
-        },
       ],
     },
     {
@@ -81,10 +75,7 @@ function App() {
       path: "/register",
       element: <Register />,
     },
-    {
-      path: "/linkpage",
-      element: <Linkpage />,
-    },
+    
   ]);
   return (
     <div>

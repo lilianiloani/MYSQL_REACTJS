@@ -1,9 +1,0 @@
-@import "../../styles.scss";
-
-.admin{
-    @include themify($themes){
-        background-color: themed("bgSoft");
-        
-    }
-
-}

@@ -12,7 +12,6 @@ export default function Update({ setOpenUpdate, user }) {
     username: user.username,
   });
   const upload = async (file) => {
-    console.log(file);
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -40,7 +39,6 @@ export default function Update({ setOpenUpdate, user }) {
     }
   );
 
-  console.log(user);
   const handleClick = async (e) => {
     e.preventDefault();
     let coverUrl;
