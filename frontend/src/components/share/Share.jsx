@@ -49,8 +49,14 @@ const Share = () => {
       <div className="container">
         <div className="top">
           <div className="left">
-    
-            <img src={currentUser.profilePicture ? "/upload/" + currentUser.profilePicture : ProfileImg} alt="" /> 
+            <img
+              src={
+                currentUser.profilePicture
+                  ? "/upload/" + currentUser.profilePicture
+                  : ProfileImg
+              }
+              alt=""
+            />
 
             <input
               type="text"
@@ -61,9 +67,8 @@ const Share = () => {
           </div>
           <div className="right">
             {file && (
-              <img className="file"src={URL.createObjectURL(file)}  alt=""  
-              /> 
-            )}  
+              <img className="file" src={URL.createObjectURL(file)} alt="" />
+            )}
           </div>
         </div>
         <hr />

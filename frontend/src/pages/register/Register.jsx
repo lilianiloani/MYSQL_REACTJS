@@ -1,6 +1,4 @@
 
-
-
  import "./register.scss";
 import Logo from "../../img/logoedit.png";
 import { useState } from "react";

@@ -9,7 +9,7 @@ import cors from "cors";
 import multer from "multer";
 import cookieParser from "cookie-parser";
 
- //middlewares
+ 
  app.use((req, res, next) => {
     res.header("Access-Control-Allow-Credentials", true);
     next();
@@ -46,9 +46,6 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/likes", likeRoutes);
 
-//to use images inside public folder
-/* app.use(express.static('public'));
-app.use('/images',express.static('images')); */
 
 app.listen(8000, ()=> {
     console.log("listening on port 8000!")

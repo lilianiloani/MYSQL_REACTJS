@@ -5,20 +5,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import moment from "moment";
 import ProfileImg from "../../img/avatarP.webp";
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
-const Comments = ({postId}) => {
-  
+const Comments = ({ postId }) => {
   const [desc, setDesc] = useState("");
   const { currentUser } = useContext(AuthContext);
- 
+
   const { isLoading, error, data } = useQuery(["comments"], () =>
-    makeRequest.get("/comments?postId=" + postId).then 
-  ((res) => {
+    makeRequest.get("/comments?postId=" + postId).then((res) => {
       return res.data;
     })
   );
-
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
@@ -32,7 +29,7 @@ const Comments = ({postId}) => {
     }
   );
 
-   const deleteMutation = useMutation(
+  const deleteMutation = useMutation(
     (id) => {
       return makeRequest.delete("/comments/" + id);
     },
@@ -45,25 +42,31 @@ const Comments = ({postId}) => {
   const handleDelete = () => {
     deleteMutation.mutate(postId);
   };
- 
 
   const handleClick = async (e) => {
     e.preventDefault();
     mutation.mutate({ desc, postId });
     setDesc("");
   };
-  
+
   return (
     <div className="comments">
       <div className="write">
-        <img src={currentUser.profilePicture ? "/upload/" + currentUser.profilePicture: ProfileImg} alt="" />
-      
+        <img
+          src={
+            currentUser.profilePicture
+              ? "/upload/" + currentUser.profilePicture
+              : ProfileImg
+          }
+          alt=""
+        />
+
         <input
-         type="text"
+          type="text"
           placeholder="Écrire un commentaire"
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
-           />
+        />
         <button onClick={handleClick}>Envoyer</button>
       </div>
 
@@ -73,21 +76,28 @@ const Comments = ({postId}) => {
         ? "loading"
         : data.map((comment) => (
             <div className="comment">
-              <img src={comment.profilePicture ?"/upload/" + comment.profilePicture : ProfileImg} alt="" />
+              <img
+                src={
+                  comment.profilePicture
+                    ? "/upload/" + comment.profilePicture
+                    : ProfileImg
+                }
+                alt=""
+              />
               <div className="info">
                 <span>{comment.username}</span>
-    
+
                 <p>{comment.desc}</p>
               </div>
-            
+
               <span className="date">
                 {moment(comment.createdAt).fromNow()}
               </span>
               <span className="item">
-              {comment.userId === currentUser.id && (
-            <DeleteOutlineOutlinedIcon onClick={handleDelete}/>
-            )} 
-            </span>
+                {comment.userId === currentUser.id && (
+                  <DeleteOutlineOutlinedIcon onClick={handleDelete} />
+                )}
+              </span>
             </div>
           ))}
     </div>
@@ -95,5 +105,3 @@ const Comments = ({postId}) => {
 };
 
 export default Comments;
-
-

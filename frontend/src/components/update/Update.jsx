@@ -1,18 +1,15 @@
 import "./update.scss";
-import { useState} from "react";
+import { useState } from "react";
 import { makeRequest } from "../../axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-
 export default function Update({ setOpenUpdate, user }) {
-  
   const [cover, setCover] = useState(null);
   const [profile, setProfile] = useState(null);
   const [texts, setTexts] = useState({
     email: user.email,
     username: user.username,
-    
   });
   const upload = async (file) => {
     console.log(file);
@@ -42,7 +39,7 @@ export default function Update({ setOpenUpdate, user }) {
       },
     }
   );
-  
+
   console.log(user);
   const handleClick = async (e) => {
     e.preventDefault();
@@ -59,7 +56,7 @@ export default function Update({ setOpenUpdate, user }) {
     });
     setOpenUpdate(false);
     setCover(null);
-    setProfile(null); 
+    setProfile(null);
   };
 
   return (
@@ -88,7 +85,7 @@ export default function Update({ setOpenUpdate, user }) {
               style={{ display: "none" }}
               onChange={(e) => setCover(e.target.files[0])}
             />
-           
+
             <label htmlFor="profile">
               <span>Image de profil</span>
               <div className="imgContainer">
@@ -110,7 +107,7 @@ export default function Update({ setOpenUpdate, user }) {
               onChange={(e) => setProfile(e.target.files[0])}
             />
           </div>
-         
+
           <label>Email</label>
           <input
             type="text"
@@ -133,4 +130,3 @@ export default function Update({ setOpenUpdate, user }) {
     </div>
   );
 }
-

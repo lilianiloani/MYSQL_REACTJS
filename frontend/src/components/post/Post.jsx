@@ -49,27 +49,16 @@ export default function Post({ post }) {
     }
   );
 
-   /*  const updateMutation = useMutation(
-    (postId) => {
-      return makeRequest.put("/posts", postId);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["posts"]);
-      },
-    }
-  );   */
-
   const updateMutation = useMutation(
     (post) => {
-      return makeRequest.put("/posts/"+post.id, post); 
+      return makeRequest.put("/posts/" + post.id, post);
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["posts"]);
       },
     }
-  );  
+  );
 
   const handleLike = () => {
     mutation.mutate(data.includes(currentUser.id));
@@ -118,7 +107,6 @@ export default function Post({ post }) {
 
         <div className="info">
           <div className="item">
-          
             {isLoading ? (
               "loading"
             ) : data.includes(currentUser.id) ? (
@@ -144,7 +132,6 @@ export default function Post({ post }) {
         {commentOpen && <Comments postId={post.id} />}
       </div>
       {updateOpen && <PostUpdate setUpdateOpen={setUpdateOpen} post={post} />}
-    
     </div>
   );
 }
