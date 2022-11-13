@@ -97,7 +97,7 @@ export default function Post({ post }) {
             </div>
           </div>
           <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
-          {menuOpen && post.userId === currentUser.id && (
+          {menuOpen && (post.userId === currentUser.id|| currentUser.isAdmin===1 ) && (
             <button onClick={handleDelete}>Suprimer</button>
           )}
         </div>
@@ -125,7 +125,7 @@ export default function Post({ post }) {
             commentaires
           </div>
           <div className="item" onClick={() => setUpdateOpen(true)}>
-            {post.userId === currentUser.id && (
+            {(post.userId === currentUser.id || currentUser.isAdmin===1) && (
               <ModeEditOutlineOutlinedIcon onClick={handleUpdate} />
             )}
           </div>
