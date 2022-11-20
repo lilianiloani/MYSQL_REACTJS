@@ -9,12 +9,7 @@ export const getPosts = (req, res) => {
  /* const userId = req.params.userId; */
  const userId = req.user.id;
  console.log("User ID :>>>>>>>>>>>>>>>>>>>>>", userId);
- /* const q =
-  userId === undefined
- ? `SELECT p.*, u.id AS userId, username, profilePicture FROM posts AS p JOIN users AS u ON (u.id = p.userId) ORDER BY p.createdAt DESC`
- : `SELECT p.*, u.id AS userId, username, profilePicture FROM posts AS p JOIN users AS u ON (u.id = p.userId) WHERE p.userId = ? ORDER BY p.createdAt DESC`
-const values =
-userId !== undefined && [userId];  */
+
 const q =
    userId === undefined 
  ? `SELECT p.*, u.id AS userId, username, profilePicture FROM posts AS p JOIN users AS u ON (u.id = p.userId)  WHERE p.userId = ? ORDER BY p.createdAt DESC`

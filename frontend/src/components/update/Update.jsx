@@ -17,7 +17,7 @@ export default function Update({ setOpenUpdate, user }) {
       formData.append("cover", file);
       formData.append("profile", pfile);
       formData.append("email", texts.email);
-      formData.append("username", texts.username);
+      formData.append("username", texts.username); 
 
       await makeRequest.put("/users", formData, {
         headers: {
@@ -29,6 +29,13 @@ export default function Update({ setOpenUpdate, user }) {
       console.log(err);
     }
   };
+  /* const handleChange = (e) => {
+    setTexts(e.target.value);
+  }; */
+  const handleChange = (e) => {
+    setTexts((prev) => ({ ...prev, [e.target.name]: [e.target.value] }));
+  };
+
 
   const handleClick = async (e) => {
     e.preventDefault();
@@ -94,18 +101,22 @@ export default function Update({ setOpenUpdate, user }) {
             type="text"
             value={texts.email}
             name="email"
-            onChange={(e) => {
+            /* onChange={(e) => {
               setTexts(...{ email: e.target.value });
-            }}
+            }} */
+             onChange={handleChange} 
+        
           />
           <label>Pseudo</label>
           <input
             type="text"
             value={texts.username}
             name="username"
-            onChange={(e) => {
+            onChange={handleChange} 
+            /* onChange={(e) => {
               setTexts(...{ username: e.target.value });
-            }}
+            }} */
+           
           />
           <button onClick={handleClick}>Mettre à jour</button>
         </form>

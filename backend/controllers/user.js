@@ -48,13 +48,13 @@ export const updateUser = (req, res) => {
   );
 
   const q =
-    "UPDATE users SET `username`=?,`email`=?, `profilePicture`=?,`coverPicture`=? WHERE id=? ";
+    "UPDATE users SET `email`=?,`username`=?, `profilePicture`=?,`coverPicture`=? WHERE id=? ";
 
   db.query(
     q,
     [
-      req.body.username,
       req.body.email,
+      req.body.username,
       profileFileName,
       coverFileName,
       req.user.id,
