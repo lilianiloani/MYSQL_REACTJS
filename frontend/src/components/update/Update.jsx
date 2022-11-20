@@ -1,7 +1,6 @@
 import "./update.scss";
 import { useState } from "react";
 import { makeRequest } from "../../axios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 export default function Update({ setOpenUpdate, user }) {
@@ -11,47 +10,31 @@ export default function Update({ setOpenUpdate, user }) {
     email: user.email,
     username: user.username,
   });
-  const upload = async (file) => {
+  const upload = async (file, pfile) => {
+    const token = JSON.parse(localStorage.getItem("user")).token;
     try {
       const formData = new FormData();
-      formData.append("file", file);
-      const res = await makeRequest.post("/upload", formData);
-      return res.data;
+      formData.append("cover", file);
+      formData.append("profile", pfile);
+      formData.append("email", texts.email);
+      formData.append("username", texts.username);
+
+      await makeRequest.put("/users", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      window.location.reload();
     } catch (err) {
       console.log(err);
     }
   };
 
-  const handleChange = (e) => {
-    setTexts((prev) => ({ ...prev, [e.target.name]: [e.target.value] }));
-  };
-
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation(
-    (user) => {
-      return makeRequest.put("/users", user);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["user"]);
-      },
-    }
-  );
-
   const handleClick = async (e) => {
     e.preventDefault();
-    let coverUrl;
-    let profileUrl;
 
-    coverUrl = cover ? await upload(cover) : user.coverPicture;
-    profileUrl = profile ? await upload(profile) : user.profilePicture;
+    cover && profile && (await upload(cover, profile));
 
-    mutation.mutate({
-      ...texts,
-      coverPicture: coverUrl,
-      profilePicture: profileUrl,
-    });
     setOpenUpdate(false);
     setCover(null);
     setProfile(null);
@@ -111,14 +94,18 @@ export default function Update({ setOpenUpdate, user }) {
             type="text"
             value={texts.email}
             name="email"
-            onChange={handleChange}
+            onChange={(e) => {
+              setTexts(...{ email: e.target.value });
+            }}
           />
           <label>Pseudo</label>
           <input
             type="text"
             value={texts.username}
             name="username"
-            onChange={handleChange}
+            onChange={(e) => {
+              setTexts(...{ username: e.target.value });
+            }}
           />
           <button onClick={handleClick}>Mettre à jour</button>
         </form>

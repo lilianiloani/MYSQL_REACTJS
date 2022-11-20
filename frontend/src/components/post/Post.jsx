@@ -6,72 +6,81 @@ import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutl
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Link } from "react-router-dom";
 import Comments from "../comments/Comments";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect} from "react";
 import moment from "moment";
 import { makeRequest } from "../../axios";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { AuthContext } from "../../context/authContext";
 import ProfileImg from "../../img/avatarP.webp";
 import PostUpdate from "../../components/postUpdate/PostUpdate";
 
 
-export default function Post({ post }) {
+export default function Post({ post,handlePostDelete  }) {
   const [commentOpen, setCommentOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
-
-  const { currentUser } = useContext(AuthContext);
-
-  const { isLoading, data } = useQuery(["likes", post.id], () =>
-    makeRequest.get("/likes?postId=" + post.id).then((res) => {
-      return res.data;
-    })
-  );
-  const queryClient = useQueryClient();
-  const mutation = useMutation(
-    (liked) => {
-      if (liked) return makeRequest.delete("/likes?postId=" + post.id);
-      return makeRequest.post("/likes", { postId: post.id });
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["likes"]);
-      },
+  const [likes, setLikes] = useState([]);
+  const [user, setUser] = useState({});
+   const { currentUser } = useContext(AuthContext); 
+   const [likesLoading, setLikesLoading] = useState(false);
+  
+   const getLikes = async() =>{
+    
+    setLikesLoading(value=>!value);
+    try{
+      let queryLikes = await makeRequest.get(`/likes/${post.id}`, {headers:{
+        Authorization:`Bearer ${currentUser.token}`,
+      }});
+       setLikes(queryLikes.data); 
+     
+      setLikesLoading(value=>!value);
+    }catch(e){
+      console.log("Get like Error :>>>>", e);
     }
-  );
-  const deleteMutation = useMutation(
-    (postId) => {
-      return makeRequest.delete("/posts/" + postId);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["posts"]);
+    
+   }
+  const handleLike = async() => {
+    console.log("like:>>>>>")
+    const token = JSON.parse(localStorage.getItem('user')).token;
+    await makeRequest.post(`/likes`, {postId: post.id}, {
+      headers:{
+        Authorization: `Bearer ${token}`
       },
-    }
-  );
+    });
+    await getLikes();
+ };
 
-  const updateMutation = useMutation(
-    (post) => {
-      return makeRequest.put("/posts/" + post.id, post);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["posts"]);
+  const handleDelete = async () => {
+    const token = JSON.parse(localStorage.getItem('user')).token;
+    await makeRequest.delete(`/likes/${post.id}`, {
+      headers:{
+        Authorization: `Bearer ${token}`
       },
-    }
-  );
-
-  const handleLike = () => {
-    mutation.mutate(data.includes(currentUser.id));
-  };
-
-  const handleDelete = () => {
-    deleteMutation.mutate(post.id);
+    });
+    await getLikes();
   };
 
   const handleUpdate = () => {
-    updateMutation.mutate(post.id);
+
   };
+
+  const getUser = async()=>{
+    let userQuery = await makeRequest.get(`/users/find`, {
+      headers:{
+        Authorization: `Bearer ${currentUser.token}`
+      },
+    });
+    setUser(userQuery.data[0]);
+  }
+
+  useEffect(() => {
+    getUser();
+  }, [])
+  
+
+  useEffect(() => {
+    getLikes();
+  }, [post])
+  
 
   return (
     <div className="post">
@@ -96,10 +105,11 @@ export default function Post({ post }) {
               <span className="date">{moment(post.createdAt).fromNow()}</span>
             </div>
           </div>
-          <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
-          {menuOpen && (post.userId === currentUser.id|| currentUser.isAdmin===1 ) && (
-            <button onClick={handleDelete}>Suprimer</button>
-          )}
+
+            <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
+          {menuOpen && (post.userId === user.id|| user.isAdmin===1 )&& (
+            <button onClick={()=>{handlePostDelete(post.id)}}>Suprimer</button>
+          )} 
         </div>
         <div className="content">
           <p>{post.desc}</p>
@@ -108,29 +118,30 @@ export default function Post({ post }) {
 
         <div className="info">
           <div className="item">
-            {isLoading ? (
-              "loading"
-            ) : data.includes(currentUser.id) ? (
+            {likesLoading ? (
+              "loading..."
+             ) : likes.includes(user.id) ? ( 
               <FavoriteOutlinedIcon
                 style={{ color: "red" }}
                 onClick={handleLike}
-              />
+              /> 
             ) : (
-              <FavoriteBorderOutlinedIcon onClick={handleLike} />
+              <FavoriteBorderOutlinedIcon onClick={handleDelete} />
             )}
-            {data?.length} J'aime
+            {likes?.length} J'aime
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
             commentaires
           </div>
-          <div className="item" onClick={() => setUpdateOpen(true)}>
-            {(post.userId === currentUser.id || currentUser.isAdmin===1) && (
+            <div className="item" onClick={() => setUpdateOpen(true)}>
+            {(post.userId === user.id || user.isAdmin===1) && (
               <ModeEditOutlineOutlinedIcon onClick={handleUpdate} />
-            )}
-          </div>
+            )} 
+          </div>   
         </div>
-        {commentOpen && <Comments postId={post.id} />}
+         {commentOpen && <Comments postId={post.id} />} 
+    
       </div>
       {updateOpen && <PostUpdate setUpdateOpen={setUpdateOpen} post={post} />}
     </div>

@@ -1,54 +1,42 @@
 import "./postUpdate.scss";
 import { useState } from "react";
 import { makeRequest } from "../../axios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const PostUpdate = ({ setUpdateOpen, post }) => {
   const [img, setImg] = useState();
-  const [texts, setTexts] = useState({
-    desc: post.desc,
-  });
+  const [texts, setTexts] = useState(post?.desc);
 
   const upload = async (file) => {
+    const token = JSON.parse(localStorage.getItem("user")).token;
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await makeRequest.post("/upload", formData);
-      return res.data;
+      formData.append("desc", texts);
+      try {
+        await makeRequest.put("/posts/" + post.id, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        window.location.reload();
+      } catch (err) {
+        console.log(err);
+      }
     } catch (err) {}
   };
 
   const handleChange = (e) => {
-    setTexts((prev) => ({ ...prev, [e.target.name]: [e.target.value] }));
+    setTexts(e.target.value);
   };
 
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation(
-    (post) => {
-      return makeRequest.put("/posts/" + post.id, post);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["posts"]);
-      },
-    }
-  );
   const handleClick = async (e) => {
     e.preventDefault();
-
-    let imgUrl;
-
-    imgUrl = img ? await upload(img) : post.img;
-    mutation.mutate({
-      id: post.id,
-      ...texts,
-      img: imgUrl,
-    });
+    if (img) await upload(img);
+    setTexts("");
+    setImg(null);
 
     setUpdateOpen(false);
-    setImg(null);
   };
   return (
     <div className="form">
@@ -76,7 +64,7 @@ const PostUpdate = ({ setUpdateOpen, post }) => {
         <textarea
           rows={5}
           type="text"
-          value={texts.desc}
+          value={texts}
           name="desc"
           onChange={handleChange}
         />

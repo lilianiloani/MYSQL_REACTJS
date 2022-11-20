@@ -1,6 +1,9 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { db } from "../connect.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { getSecretKey } from "../constants/keys.js";
 
 export const register = (req, res) => {
   const q = "SELECT * FROM users WHERE username = ?";
@@ -39,16 +42,18 @@ export const login = (req, res) => {
     if (!checkPassword)
       return res.status(400).json("Mot de passe ou nom d'utilisateur erroné!");
 
-    const token = jwt.sign({ id: data[0].id }, "secretkey");
+    const maxAge = 1 * (24 * 60 * 60 * 1000);
+    let user = data[0];
+    delete user.password;
 
-    const { password, ...others } = data[0];
+    const token = jwt.sign({ user: user }, getSecretKey(), {
+      expiresIn: maxAge,
+    });
 
-    res
-      .cookie("accessToken", token, {
-        httpOnly: true,
-      })
-      .status(200)
-      .json(others);
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+    });
+    res.status(200).json({ token, userId: user.id });
   });
 };
 

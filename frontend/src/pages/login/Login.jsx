@@ -23,6 +23,7 @@ export default function Login() {
     try {
       await login(inputs);
       navigate("/");
+      window.location.href='/';
     } catch (err) {
       setErr(err.response.data);
     }

@@ -1,11 +1,11 @@
 import express from "express";
 import { getLikes, addLike, deleteLike } from "../controllers/like.js";
-
+import { auth } from "../middlewares/auth.middleware.js";
 const router = express.Router()
 
-router.get("/", getLikes)
-router.post("/", addLike)
-router.delete("/", deleteLike)
+router.get("/:id", auth, getLikes)
+router.post("/", auth, addLike)
+router.delete("/:postId",auth, deleteLike)
 
 
 export default router

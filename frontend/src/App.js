@@ -4,7 +4,7 @@ import {
   createBrowserRouter,
   Outlet,
   RouterProvider,
-  Navigate,
+    Navigate,   
 } from "react-router-dom";
 import NavBar from "./components/navBar/Navbar";
 import LeftBar from "./components/leftBar/LeftBar";
@@ -15,6 +15,7 @@ import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/authContext";
 import { QueryClient, QueryClientProvider,} from '@tanstack/react-query'
+
 
 
 function App() {
@@ -41,10 +42,10 @@ function App() {
     );
   };
   const ProtectedRoute = ({ children }) => {
-    if (!currentUser) {
+         if (!currentUser) {
       return <Navigate to="/login" />;
-    }
-    
+    }    
+   
     return children;
   };
 
@@ -52,9 +53,9 @@ function App() {
     {
       path: "/", 
       element: (
-        <ProtectedRoute>
+         <ProtectedRoute> 
           <Layout />
-        </ProtectedRoute>
+         </ProtectedRoute> 
       ),
       children: [
         {

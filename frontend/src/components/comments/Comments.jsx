@@ -1,6 +1,5 @@
-import { useContext, useState } from "react";
+import { useEffect, useState } from "react";
 import "./comments.scss";
-import { AuthContext } from "../../context/authContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import moment from "moment";
@@ -9,14 +8,30 @@ import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined
 
 const Comments = ({ postId }) => {
   const [desc, setDesc] = useState("");
-  const { currentUser } = useContext(AuthContext);
- 
+
+
+  const [user, setUser] = useState({});
+  const getUser = async () => {
+    let token = JSON.parse(localStorage.getItem("user")).token;
+    let query = await makeRequest("/users/find/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("From comment :>>>>>>>>>>>>>>>>>>>", query.data[0]);
+    setUser(query.data[0]);
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const { isLoading, error, data } = useQuery(["comments"], () =>
     makeRequest.get("/comments?postId=" + postId).then((res) => {
       return res.data;
     })
   );
+
   const queryClient = useQueryClient();
 
   const mutation = useMutation(
@@ -55,8 +70,8 @@ const Comments = ({ postId }) => {
       <div className="write">
         <img
           src={
-            currentUser.profilePicture
-              ? "/upload/" + currentUser.profilePicture
+            user?.profilePicture
+              ? "/upload/" + user?.profilePicture
               : ProfileImg
           }
           alt=""
@@ -79,23 +94,23 @@ const Comments = ({ postId }) => {
             <div className="comment">
               <img
                 src={
-                  comment.profilePicture
-                    ? "/upload/" + comment.profilePicture
+                  comment?.profilePicture
+                    ? "/upload/" + comment?.profilePicture
                     : ProfileImg
                 }
                 alt=""
               />
               <div className="info">
-                <span>{comment.username}</span>
+                <span>{comment?.username}</span>
 
-                <p>{comment.desc}</p>
+                <p>{comment?.desc}</p>
               </div>
 
               <span className="date">
-                {moment(comment.createdAt).fromNow()}
+                {moment(comment?.createdAt).fromNow()}
               </span>
               <span className="item">
-                {comment.userId === currentUser.id && (
+                {comment.userId === user.id && (
                   <DeleteOutlineOutlinedIcon onClick={handleDelete} />
                 )}
               </span>

@@ -2,15 +2,31 @@ import "./navbar.scss";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import WbSunnyOutlinedIcon from "@mui/icons-material/WbSunnyOutlined";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
 import Logo from "../../img/logoedit.png";
 import ProfileImg from "../../img/avatarP.webp";
-import { AuthContext } from "../../context/authContext";
+import { makeRequest } from "../../axios";
+import { useState } from "react";
 
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
-  const { currentUser } = useContext(AuthContext);
+  const [user, setUser] = useState({});
+
+  const getUser = async () => {
+    let token = JSON.parse(localStorage.getItem("user")).token;
+    let query = await makeRequest("/users/find/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setUser(query.data[0]);
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const logout = () => {
     localStorage.clear();
@@ -24,18 +40,17 @@ const Navbar = () => {
           <img src={Logo} alt="" />
         </Link>
         <div className="user">
-          <Link to={`/profile/${currentUser.id}`}>
+          <Link to={`/profile/${user.id}`}>
             <img
               src={
-                currentUser.profilePicture
-                  ? "/upload/" + currentUser.profilePicture
+                user?.profilePicture
+                  ? "/upload/" + user?.profilePicture
                   : ProfileImg
               }
               alt=""
             />
           </Link>
         </div>
-
         {darkMode ? (
           <WbSunnyOutlinedIcon onClick={toggle} />
         ) : (

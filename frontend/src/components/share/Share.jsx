@@ -1,45 +1,36 @@
 import "./share.scss";
 import PermMediaOutlinedIcon from "@mui/icons-material/PermMediaOutlined";
-import { useContext, useState } from "react";
-import { AuthContext } from "../../context/authContext";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {useState } from "react";
 import { makeRequest } from "../../axios";
 import ProfileImg from "../../img/avatarP.webp";
 
-const Share = () => {
+const Share = ({ user, setSubmit }) => {
   const [file, setFile] = useState(null);
   const [desc, setDesc] = useState("");
 
   const upload = async () => {
+    console.log("File", file);
+    const token = JSON.parse(localStorage.getItem("user")).token;
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await makeRequest.post("/upload", formData);
-      return res.data;
+      formData.append("desc", desc);
+
+      await makeRequest.post("/posts", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setSubmit((value) => !value);
+      window.location.reload();
     } catch (err) {
       console.log(err);
     }
   };
-
-  const { currentUser } = useContext(AuthContext);
-
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation(
-    (newPost) => {
-      return makeRequest.post("/posts", newPost);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["posts"]);
-      },
-    }
-  );
   const handleClick = async (e) => {
     e.preventDefault();
-    let imgUrl = "";
-    if (file) imgUrl = await upload();
-    mutation.mutate({ desc, img: imgUrl });
+    if (file) await upload();
     setDesc("");
     setFile(null);
   };
@@ -51,8 +42,8 @@ const Share = () => {
           <div className="left">
             <img
               src={
-                currentUser.profilePicture
-                  ? "/upload/" + currentUser.profilePicture
+                user?.profilePicture
+                  ? "/upload/" + user?.profilePicture
                   : ProfileImg
               }
               alt=""
@@ -60,7 +51,7 @@ const Share = () => {
 
             <input
               type="text"
-              placeholder={`Quoi de neuf ${currentUser.username}?`}
+              placeholder={`Quoi de neuf ${user?.username}?`}
               onChange={(e) => setDesc(e.target.value)}
               value={desc}
             />
