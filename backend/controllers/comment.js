@@ -29,13 +29,14 @@ export const addComment = (req, res) => {
 };
 
 export const deleteComment = (req, res) => {
-  const commentId = req.params.id;
-  const q = "DELETE FROM comments WHERE `id`=? AND `userId` = ?";
+  const comment_id = req.params.id;
 
-  /* "DELETE FROM comments WHERE `id`=?"; */
+  const q = "DELETE FROM comments WHERE `id`=?";
 
-  db.query(q, [commentId, req.user.id], (err, data) => {
-    /* db.query(q, [commentId], (err, data) => { */
+  //` DELETE FROM comments WHERE comments.id =${comment_id}`; 
+
+  db.query(q, [comment_id], (err, data) => {
+     //db.query(q,(err, data) => { 
     if (err) return res.status(500).json(err);
     if (data.affectedRows > 0)
       return res.status(200).json("comment has been deleted.");

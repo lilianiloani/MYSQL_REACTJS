@@ -14,11 +14,12 @@ import ProfileImg from "../../img/avatarP.webp";
 import PostUpdate from "../../components/postUpdate/PostUpdate";
 
 
+
 export default function Post({ post,handlePostDelete  }) {
   const [commentOpen, setCommentOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [updateOpen, setUpdateOpen] = useState(false);
-  const [likes, setLikes] = useState([]);
+   const [likes, setLikes] = useState([]); 
   const [user, setUser] = useState({});
    const { currentUser } = useContext(AuthContext); 
    const [likesLoading, setLikesLoading] = useState(false);
@@ -31,38 +32,45 @@ export default function Post({ post,handlePostDelete  }) {
         Authorization:`Bearer ${currentUser.token}`,
       }});
        setLikes(queryLikes.data); 
-     
       setLikesLoading(value=>!value);
     }catch(e){
       console.log("Get like Error :>>>>", e);
     }
     
    }
+  
   const handleLike = async() => {
-    console.log("like:>>>>>")
+  
     const token = JSON.parse(localStorage.getItem('user')).token;
-    await makeRequest.post(`/likes`, {postId: post.id}, {
+    await makeRequest.put(`/likes`, {postId: post.id}, {
       headers:{
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}` 
       },
     });
+  
     await getLikes();
  };
 
-  const handleDelete = async () => {
+  useEffect(() => {
+    getLikes();
+  }, [post])
+
+   const handleLikeDelete = async () => {
     const token = JSON.parse(localStorage.getItem('user')).token;
     await makeRequest.delete(`/likes/${post.id}`, {
       headers:{
-        Authorization: `Bearer ${token}`
+         Authorization: `Bearer ${token}` 
+      
       },
     });
+    
     await getLikes();
   };
-
-  const handleUpdate = () => {
+ 
+   const handleUpdate = () => {
 
   };
-
+ 
   const getUser = async()=>{
     let userQuery = await makeRequest.get(`/users/find`, {
       headers:{
@@ -75,12 +83,6 @@ export default function Post({ post,handlePostDelete  }) {
   useEffect(() => {
     getUser();
   }, [])
-  
-
-  useEffect(() => {
-    getLikes();
-  }, [post])
-  
 
   return (
     <div className="post">
@@ -123,10 +125,10 @@ export default function Post({ post,handlePostDelete  }) {
              ) : likes.includes(user.id) ? ( 
               <FavoriteOutlinedIcon
                 style={{ color: "red" }}
-                onClick={handleLike}
+                onClick={handleLikeDelete}
               /> 
             ) : (
-              <FavoriteBorderOutlinedIcon onClick={handleDelete} />
+              <FavoriteBorderOutlinedIcon onClick={handleLike} />
             )}
             {likes?.length} J'aime
           </div>

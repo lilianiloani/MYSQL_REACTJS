@@ -4,7 +4,7 @@ import { auth } from "../middlewares/auth.middleware.js";
 const router = express.Router()
 
 router.get("/:id", auth, getLikes)
-router.post("/", auth, addLike)
+router.put("/", auth, addLike)
 router.delete("/:postId",auth, deleteLike)
 
 

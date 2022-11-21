@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, /* useContext, */ } from "react";
 import "./comments.scss";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import moment from "moment";
+//import { AuthContext } from "../../context/authContext";
 import ProfileImg from "../../img/avatarP.webp";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 const Comments = ({ postId }) => {
   const [desc, setDesc] = useState("");
-
-
   const [user, setUser] = useState({});
+  //const { currentUser } = useContext(AuthContext); 
+
   const getUser = async () => {
     let token = JSON.parse(localStorage.getItem("user")).token;
     let query = await makeRequest("/users/find/", {
@@ -26,13 +27,39 @@ const Comments = ({ postId }) => {
     getUser();
   }, []);
 
-  const { isLoading, error, data } = useQuery(["comments"], () =>
+ /*  const getComments = async() =>{
+    
+    setLikesLoading(value=>!value);
+    try{
+      let queryLikes = await makeRequest.get(`/likes/${postId}`, {headers:{
+        Authorization:`Bearer ${currentUser.token}`,
+      }});
+       setLikes(queryLikes.data); 
+      setLikesLoading(value=>!value);
+    }catch(e){
+      console.log("Get like Error :>>>>", e);
+    }
+    
+   } */
+
+   const { isLoading, error, data } = useQuery(["comments"], () =>
     makeRequest.get("/comments?postId=" + postId).then((res) => {
       return res.data;
     })
-  );
+  ); 
+  /* const handleDelete = async () => {
+    const token = JSON.parse(localStorage.getItem('user')).token;
+    await makeRequest.delete(`/comments/${postId}`, {
+      headers:{
+         Authorization: `Bearer ${token}` 
+      
+      },
+    });
+    
+    await getComments();
+  }; */
 
-  const queryClient = useQueryClient();
+   const queryClient = useQueryClient();
 
   const mutation = useMutation(
     (newComment) => {
@@ -57,7 +84,7 @@ const Comments = ({ postId }) => {
   );
   const handleDelete = () => {
     deleteMutation.mutate(postId);
-  };
+  }; 
 
   const handleClick = async (e) => {
     e.preventDefault();
