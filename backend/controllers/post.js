@@ -88,6 +88,15 @@ export const updatePost = (req, res) => {
     if(error) return result.status(404).json('Post not found');
     let post = result[0];
 
+    let userId = req.params.user_id;
+    let isAdmin = 0
+    let user = "SELECT * FROM users WHERE `id` = ?";
+    db.query(user, [userId], (error,result)=>{
+      if(error) return result.status(404).json('user not found'); 
+      isAdmin = result[0].isAdmin;
+      console.log("user:>> ", result)
+    });
+    
     if(req.params.user_id == post.userId || req.user.isAdmin === 1){
       let file = req.file;
 
@@ -110,6 +119,4 @@ export const updatePost = (req, res) => {
     }
   });
 
-
-  
 };
