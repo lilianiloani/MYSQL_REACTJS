@@ -53,7 +53,7 @@ export const deletePost = async (req, res) => {
     if (error) return result.status(404).json("Post not found");
     let post = result[0];
 
-    let userId = req.params.user_id;
+    let userId = req.user.id;
     let isAdmin = 0;
     let user = "SELECT * FROM users WHERE `id` = ?";
     db.query(user, [userId], (error, result) => {
@@ -61,7 +61,7 @@ export const deletePost = async (req, res) => {
       isAdmin = result[0].isAdmin;
     });
 
-    if (req.params.user_id == post.userId || isAdmin === 1) {
+    if (req.user.id == post.userId || req.user.isAdmin === 1) {
       const q = "DELETE FROM posts WHERE `id`=?";
       db.query(q, [post_id], (err, data) => {
         if (err) return res.status(500).json(err);
@@ -82,7 +82,8 @@ export const updatePost = (req, res) => {
     if (error) return result.status(404).json("Post not found");
     let post = result[0];
 
-    let userId = req.params.user_id;
+    //let userId = req.params.user_id;
+    let userId = req.user.id;
     let isAdmin = 0;
     let user = "SELECT * FROM users WHERE `id` = ?";
     db.query(user, [userId], (error, result) => {
@@ -90,7 +91,7 @@ export const updatePost = (req, res) => {
       isAdmin = result[0].isAdmin;
     });
 
-    if (req.params.user_id == post.userId || req.user.isAdmin === 1) {
+    if (req.user.id == post.userId || req.user.isAdmin === 1) {
       let file = req.file;
 
       const fileName = `${v4()}.${file.originalname.split(".").splice(-1)[0]}`;
