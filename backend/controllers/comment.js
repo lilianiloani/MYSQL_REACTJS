@@ -19,7 +19,6 @@ export const addComment = (req, res) => {
     req.body.desc,
     moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     req.user.id,
-    /*  req.body.postId, */
     req.params.postId,
   ];
 
@@ -30,7 +29,31 @@ export const addComment = (req, res) => {
 };
 
 export const deleteComment = (req, res) => {
-  const commentId = req.params.id;
+  let comment_id = req.params.id;
+  let query = "SELECT * FROM comments WHERE `id` = ?";
+
+  db.query(query, [comment_id], (error, result) => {
+    if (error) return result.status(404).json("Post not found");
+
+    //let comment = result[0];
+
+    let userId = req.params.user_id;
+   
+    let user = "SELECT * FROM users WHERE `id` = ?";
+    db.query(user, [userId], (error, result) => {
+      if (error) return result.status(404).json("user not found");
+      
+    });
+      const q = "DELETE FROM comments WHERE `id`=?";
+      db.query(q, [comment_id], (err, data) => {
+        if (err) return res.status(500).json(err);
+        if (data.affectedRows > 0)
+          return res.status(200).json("Post has been deleted.");
+      });
+    
+  
+    });
+  /* const commentId = req.params.id;
 
   const q = "DELETE FROM comments WHERE `id`=?";
 
@@ -39,5 +62,5 @@ export const deleteComment = (req, res) => {
     if (data.affectedRows > 0)
       return res.status(200).json("comment has been deleted.");
     return res.status(403).json("You can delete only your comment");
-  });
+  }); */
 };

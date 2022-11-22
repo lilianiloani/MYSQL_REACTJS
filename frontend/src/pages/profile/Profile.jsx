@@ -74,7 +74,6 @@ const Profile = () => {
               </div>
             </div>
 
-            {/*   {userId && <Posts userId={userId} />} */}
             {userId && <Posts userId={user.id} />}
           </div>
         </>

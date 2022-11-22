@@ -12,9 +12,6 @@ export default function Posts({ userId }) {
 
     const user = JSON.parse(localStorage.getItem("user"));
     const token = user.token;
-
-   /*  let result = await makeRequest.get(`/posts/${userId}`, {headers: { Authorization: `Bearer ${token}` },
-    }); */
     let result = await makeRequest.get(`/posts/${userId}`, {headers: { Authorization: `Bearer ${token}` },
   });
 

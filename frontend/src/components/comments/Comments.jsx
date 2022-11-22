@@ -1,90 +1,36 @@
-import { useEffect, useState,  useContext, } from "react";
+import { useEffect, useState } from "react";
 import "./comments.scss";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import moment from "moment";
-import { AuthContext } from "../../context/authContext";
 import ProfileImg from "../../img/avatarP.webp";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
-const Comments = ({ postId}) => {
+const Comments = ({ postId }) => {
   const [desc, setDesc] = useState("");
   const [user, setUser] = useState({});
-  const { currentUser } = useContext(AuthContext);
-  //const [isLoading, setIsLoading] = useState(false); 
 
   const getUser = async () => {
-    //let token = JSON.parse(localStorage.getItem("user")).token;
+    let token = JSON.parse(localStorage.getItem("user")).token;
     let query = await makeRequest("/users/find/", {
       headers: {
-        Authorization: `Bearer ${currentUser.token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
-    console.log("From comment :>>>>>>>>>>>>>>>>>>>", query.data[0]);
+
     setUser(query.data[0]);
   };
 
   useEffect(() => {
     getUser();
-  }, [])
-
-  /* const getComments = async () => {
-    setIsLoading((value) => !value);
-
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = user.token;
-
-    let result = await makeRequest.get(`/comments/${postId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  
-
-    setDesc([...result.data]);
-    setIsLoading((value) => !value);
-  };
-  useEffect(() => {
-    getComments();
   }, []);
- */
-  /* const setSubmit = async () => {
-    const token = JSON.parse(localStorage.getItem("user")).token;
-    try {
-      const newComment = new Comment(); 
 
-   await makeRequest.post("/comments", newComment, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setSubmit((value) => !value);
-      document.location.reload();
-    } catch (err) {
-      console.log(err);
-    }
- 
-  }; */
-  /* const handleDelete = async (post_id, user_id) => {
-    const token = JSON.parse(localStorage.getItem("user")).token;
-    await makeRequest.delete(`/comments/${post_id}/${user_id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    await getComments();
-    document.location.reload();
-  };
-
-  const handleClick = async (e) => {
-    e.preventDefault();
-    setDesc("");
-  }; */
-   const { isLoading,  data } = useQuery(["comments"], () =>
+  const { isLoading, data } = useQuery(["comments"], () =>
     makeRequest.get("/comments?postId=" + postId).then((res) => {
       return res.data;
     })
-  ); 
-   const queryClient = useQueryClient();
+  );
+  const queryClient = useQueryClient();
 
   const mutation = useMutation(
     (newComment) => {
@@ -109,77 +55,13 @@ const Comments = ({ postId}) => {
   );
   const handleDelete = () => {
     deleteMutation.mutate(postId);
-  };  
+  };
 
   const handleClick = async (e) => {
     e.preventDefault();
     mutation.mutate({ desc, postId });
     setDesc("");
   };
-
- 
-  /* const getComments = async () => {
-    setIsLoading((value) => !value);
-
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = user.token;
-
-    let result = await makeRequest.get("/posts?userId=" + user, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    getComments([...result.data]);
-    setIsLoading((value) => !value);
-  };
-
-  const handleDelete = async (post_id) => {
-    const token = JSON.parse(localStorage.getItem("user")).token;
-    await makeRequest.delete(`/posts/${post_id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    await getComments();
-    window.location.reload();
-  };
-
-  useEffect(() => {
-    getComments();
-  }, []);
-
-  const handleClick = async (e) => {
-    e.preventDefault();
-    setDesc("");
-  };
- */
-
- /*  const getComments = async() =>{
-    
-    setLikesLoading(value=>!value);
-    try{
-      let queryLikes = await makeRequest.get(`/likes/${postId}`, {headers:{
-        Authorization:`Bearer ${currentUser.token}`,
-      }});
-       setLikes(queryLikes.data); 
-      setLikesLoading(value=>!value);
-    }catch(e){
-      console.log("Get like Error :>>>>", e);
-    }
-    
-   } */
-
-   
-  /* const handleDelete = async () => {
-    const token = JSON.parse(localStorage.getItem('user')).token;
-    await makeRequest.delete(`/comments/${postId}`, {
-      headers:{
-         Authorization: `Bearer ${token}` 
-      
-      },
-    });
-    
-    await getComments();
-  }; */
 
   return (
     <div className="comments">
@@ -202,9 +84,9 @@ const Comments = ({ postId}) => {
         <button onClick={handleClick}>Envoyer</button>
       </div>
 
-       {isLoading
+      {isLoading
         ? "loading"
-        : data.map((comment) => ( 
+        : data.map((comment) => (
             <div className="comment">
               <img
                 src={
