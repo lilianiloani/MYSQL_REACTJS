@@ -11,9 +11,7 @@ export default function Update({ setOpenUpdate, user }) {
     username: user.username,
   });
   const upload = async (file, pfile) => {
-    console.log("Here :>>>>>>>>>>>>>>>>", file);
-    console.log("pFile here :>>>>>>>>>", pfile);
-
+    
     const token = JSON.parse(localStorage.getItem("user")).token;
     try {
       const formData = new FormData();

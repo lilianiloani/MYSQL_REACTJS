@@ -7,7 +7,6 @@ const upload = multer();
 
 router.get("/:userId?", auth, getPosts);
 router.post("/", auth, upload.single("file"), addPost);
-/* router.delete("/:id/:userId",auth,  deletePost); */
 router.delete("/:id/:user_id",auth,  deletePost);
 router.put("/:id/:user_id", auth, upload.single("file"),updatePost);
 

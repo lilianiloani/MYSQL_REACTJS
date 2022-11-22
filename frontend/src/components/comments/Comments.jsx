@@ -7,10 +7,11 @@ import { AuthContext } from "../../context/authContext";
 import ProfileImg from "../../img/avatarP.webp";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
-const Comments = ({ postId }) => {
+const Comments = ({ postId}) => {
   const [desc, setDesc] = useState("");
   const [user, setUser] = useState({});
-  const { currentUser } = useContext(AuthContext); 
+  const { currentUser } = useContext(AuthContext);
+  //const [isLoading, setIsLoading] = useState(false); 
 
   const getUser = async () => {
     //let token = JSON.parse(localStorage.getItem("user")).token;
@@ -27,12 +28,63 @@ const Comments = ({ postId }) => {
     getUser();
   }, [])
 
-  const { isLoading,  data } = useQuery(["comments"], () =>
+  /* const getComments = async () => {
+    setIsLoading((value) => !value);
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = user.token;
+
+    let result = await makeRequest.get(`/comments/${postId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  
+
+    setDesc([...result.data]);
+    setIsLoading((value) => !value);
+  };
+  useEffect(() => {
+    getComments();
+  }, []);
+ */
+  /* const setSubmit = async () => {
+    const token = JSON.parse(localStorage.getItem("user")).token;
+    try {
+      const newComment = new Comment(); 
+
+   await makeRequest.post("/comments", newComment, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setSubmit((value) => !value);
+      document.location.reload();
+    } catch (err) {
+      console.log(err);
+    }
+ 
+  }; */
+  /* const handleDelete = async (post_id, user_id) => {
+    const token = JSON.parse(localStorage.getItem("user")).token;
+    await makeRequest.delete(`/comments/${post_id}/${user_id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    await getComments();
+    document.location.reload();
+  };
+
+  const handleClick = async (e) => {
+    e.preventDefault();
+    setDesc("");
+  }; */
+   const { isLoading,  data } = useQuery(["comments"], () =>
     makeRequest.get("/comments?postId=" + postId).then((res) => {
       return res.data;
     })
-  );
-  const queryClient = useQueryClient();
+  ); 
+   const queryClient = useQueryClient();
 
   const mutation = useMutation(
     (newComment) => {
@@ -57,7 +109,7 @@ const Comments = ({ postId }) => {
   );
   const handleDelete = () => {
     deleteMutation.mutate(postId);
-  }; 
+  };  
 
   const handleClick = async (e) => {
     e.preventDefault();
@@ -65,6 +117,7 @@ const Comments = ({ postId }) => {
     setDesc("");
   };
 
+ 
   /* const getComments = async () => {
     setIsLoading((value) => !value);
 

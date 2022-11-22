@@ -19,8 +19,8 @@ export const addComment = (req, res) => {
     req.body.desc,
     moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
     req.user.id,
-   /*  req.body.postId, */
-   req.params.postId,
+    /*  req.body.postId, */
+    req.params.postId,
   ];
 
   db.query(q, [values], (err, data) => {
@@ -34,9 +34,7 @@ export const deleteComment = (req, res) => {
 
   const q = "DELETE FROM comments WHERE `id`=?";
 
-  
   db.query(q, [commentId], (err, data) => {
-     //db.query(q,(err, data) => { 
     if (err) return res.status(500).json(err);
     if (data.affectedRows > 0)
       return res.status(200).json("comment has been deleted.");

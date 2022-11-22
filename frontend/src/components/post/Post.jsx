@@ -34,7 +34,7 @@ export default function Post({ post,handlePostDelete  }) {
        setLikes(queryLikes.data); 
       setLikesLoading(value=>!value);
     }catch(e){
-      //console.log("Get like Error :>>>>", e);
+  
     }
     
    }
@@ -108,9 +108,10 @@ export default function Post({ post,handlePostDelete  }) {
             </div>
           </div>
 
-            <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
-          {menuOpen && (post.userId === user.id|| user.isAdmin===1 )&& (
-            <button onClick={()=>{handlePostDelete(post.id, post.userId)}}>Suprimer</button>
+            {/* <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />  */}
+          {/* menuOpen && */ (post.userId === user.id|| user.isAdmin===1 )&& (
+            
+            <button onClick={()=>{handlePostDelete(post.id, post.userId)}}>Supprimer</button>
           )} 
         </div>
         <div className="content">

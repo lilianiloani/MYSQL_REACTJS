@@ -6,15 +6,12 @@ import fs from "fs";
 
 export const getPosts = (req, res) => {
   const userId = req.user.id;
-  console.log("User ID :>>>>>>>>>>>>>>>>>>>>>", userId);
-
   const q =
     userId === undefined
       ? `SELECT p.*, u.id AS userId, username, profilePicture FROM posts AS p JOIN users AS u ON (u.id = p.userId)  WHERE p.userId = ? ORDER BY p.createdAt DESC`
       : `SELECT p.*, u.id AS userId, username, profilePicture FROM posts AS p JOIN users AS u ON (u.id = p.userId) ORDER BY p.createdAt DESC`;
   const values = userId !== undefined && [userId];
   db.query(q, userId && values, (err, data) => {
-    console.log("Error :>>>>>>>>>>>>>>>>", err);
     if (err) return res.status(500).json(err);
 
     return res.status(200).json(data);
@@ -44,7 +41,6 @@ export const addPost = (req, res) => {
   db.query(q, [values], (err, data) => {
     if (err) return res.status(500).json(err);
 
-    console.log("addedPost Here :>>>>>>>>>>>>", data);
     return res.status(200).json("Post has been created.");
   });
 };
@@ -57,7 +53,17 @@ export const deletePost = async (req, res) => {
     if(error) return result.status(404).json('Post not found');
     let post = result[0];
 
-    if(req.params.user_id == post.userId || req.user.isAdmin === 1){
+    let userId = req.params.user_id;
+    let isAdmin = 0
+    let user = "SELECT * FROM users WHERE `id` = ?";
+    db.query(user, [userId], (error,result)=>{
+      if(error) return result.status(404).json('user not found'); 
+      isAdmin = result[0].isAdmin;
+      console.log("user:>> ", result)
+    });
+    
+    if(req.params.user_id == post.userId || isAdmin === 1){
+
       const q = "DELETE FROM posts WHERE `id`=?";  
       db.query(q, [post_id], (err, data) => { 
         if (err) return res.status(500).json(err);

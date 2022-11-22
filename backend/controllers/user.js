@@ -19,11 +19,11 @@ export const getUser = (req, res) => {
 
 export const updateUser = (req, res) => {
   console.log("File :>>>>>>>>>>>>>>>>>>>>>>>", req);
-   let cover = req.files['cover'][0];
+  let cover = req.files['cover'][0];
   let profile = req.files['profile'][0]; 
   
   const coverFileName = `${v4()}.${
-    cover.originalname.split(".").splice(-1)[0]
+  cover.originalname.split(".").splice(-1)[0]
   }`;
 
   const profileFileName = `${v4()}.${
