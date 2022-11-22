@@ -3,7 +3,7 @@ import { useState } from "react";
 import { makeRequest } from "../../axios";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
-const PostUpdate = ({ setUpdateOpen, post }) => {
+const PostUpdate = ({ setUpdateOpen, post,}) => {
   const [img, setImg] = useState();
   const [texts, setTexts] = useState(post?.desc);
 
@@ -14,12 +14,12 @@ const PostUpdate = ({ setUpdateOpen, post }) => {
       formData.append("file", file);
       formData.append("desc", texts);
       try {
-        await makeRequest.put("/posts/" + post.id, formData, {
+        await makeRequest.put(`/posts/${post.id}/${post.userId}`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        window.location.reload();
+        document.location.reload();
       } catch (err) {
         console.log(err);
       }

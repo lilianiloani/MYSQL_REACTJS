@@ -34,7 +34,7 @@ export default function Post({ post,handlePostDelete  }) {
        setLikes(queryLikes.data); 
       setLikesLoading(value=>!value);
     }catch(e){
-      console.log("Get like Error :>>>>", e);
+      //console.log("Get like Error :>>>>", e);
     }
     
    }
@@ -110,7 +110,7 @@ export default function Post({ post,handlePostDelete  }) {
 
             <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
           {menuOpen && (post.userId === user.id|| user.isAdmin===1 )&& (
-            <button onClick={()=>{handlePostDelete(post.id)}}>Suprimer</button>
+            <button onClick={()=>{handlePostDelete(post.id, post.userId)}}>Suprimer</button>
           )} 
         </div>
         <div className="content">
@@ -138,14 +138,14 @@ export default function Post({ post,handlePostDelete  }) {
           </div>
             <div className="item" onClick={() => setUpdateOpen(true)}>
             {(post.userId === user.id || user.isAdmin===1) && (
-              <ModeEditOutlineOutlinedIcon onClick={handleUpdate} />
+              <ModeEditOutlineOutlinedIcon />
             )} 
           </div>   
         </div>
          {commentOpen && <Comments postId={post.id} />} 
     
       </div>
-      {updateOpen && <PostUpdate setUpdateOpen={setUpdateOpen} post={post} />}
+      {updateOpen && <PostUpdate setUpdateOpen={setUpdateOpen} post={post} handleUpdate={handleUpdate} />}
     </div>
   );
 }

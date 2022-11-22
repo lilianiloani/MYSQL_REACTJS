@@ -6,30 +6,30 @@ import { useEffect, useState } from "react";
 export default function Posts({ userId }) {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
   const getPosts = async () => {
     setIsLoading((value) => !value);
 
     const user = JSON.parse(localStorage.getItem("user"));
     const token = user.token;
-    console.log("Token :>>>>>>>>>>>>>>>>>>", token);
-    
-    let result = await makeRequest.get("/posts?userId=" + userId, {
+
+    let result = await makeRequest.get(`/posts/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log("Posts :>>>>>>>>>>>>>>>>>>", result.data);
+
     setPosts([...result.data]);
     setIsLoading((value) => !value);
   };
 
-  const handlePostDelete = async (post_id) => {
+  const handlePostDelete = async (post_id, user_id) => {
     const token = JSON.parse(localStorage.getItem("user")).token;
-    await makeRequest.delete(`/posts/${post_id}`, {
+    await makeRequest.delete(`/posts/${post_id}/${user_id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     await getPosts();
-    window.location.reload();
+    document.location.reload();
   };
 
   useEffect(() => {

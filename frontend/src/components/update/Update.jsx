@@ -11,6 +11,9 @@ export default function Update({ setOpenUpdate, user }) {
     username: user.username,
   });
   const upload = async (file, pfile) => {
+    console.log("Here :>>>>>>>>>>>>>>>>", file);
+    console.log("pFile here :>>>>>>>>>", pfile);
+
     const token = JSON.parse(localStorage.getItem("user")).token;
     try {
       const formData = new FormData();
@@ -24,14 +27,12 @@ export default function Update({ setOpenUpdate, user }) {
           Authorization: `Bearer ${token}`,
         },
       });
-      window.location.reload();
+      document.location.reload();
     } catch (err) {
       console.log(err);
     }
   };
-  /* const handleChange = (e) => {
-    setTexts(e.target.value);
-  }; */
+  
   const handleChange = (e) => {
     setTexts((prev) => ({ ...prev, [e.target.name]: [e.target.value] }));
   };
@@ -39,8 +40,8 @@ export default function Update({ setOpenUpdate, user }) {
 
   const handleClick = async (e) => {
     e.preventDefault();
-
-    cover && profile && (await upload(cover, profile));
+    
+    (cover || profile) && (await upload(cover, profile));
 
     setOpenUpdate(false);
     setCover(null);
@@ -101,9 +102,6 @@ export default function Update({ setOpenUpdate, user }) {
             type="text"
             value={texts.email}
             name="email"
-            /* onChange={(e) => {
-              setTexts(...{ email: e.target.value });
-            }} */
              onChange={handleChange} 
         
           />
@@ -113,10 +111,6 @@ export default function Update({ setOpenUpdate, user }) {
             value={texts.username}
             name="username"
             onChange={handleChange} 
-            /* onChange={(e) => {
-              setTexts(...{ username: e.target.value });
-            }} */
-           
           />
           <button onClick={handleClick}>Mettre à jour</button>
         </form>

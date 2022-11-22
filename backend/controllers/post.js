@@ -1,12 +1,10 @@
 import { db } from "../connect.js";
-//import jwt from "jsonwebtoken";
 import moment from "moment";
 import { v4 } from "uuid";
 import path from "path";
 import fs from "fs";
 
 export const getPosts = (req, res) => {
-  /* const userId = req.params.userId; */
   const userId = req.user.id;
   console.log("User ID :>>>>>>>>>>>>>>>>>>>>>", userId);
 
@@ -51,45 +49,61 @@ export const addPost = (req, res) => {
   });
 };
 
-export const deletePost = (req, res) => {
-  //Get the post by post id
-  //check if req.params.postId
-  //check if req.user.isAdmin is true
-  /* const post = req.params.id;
-  const userId = req.user.id;
-  let isAdmin = 1;
+export const deletePost = async (req, res) => {
+  let post_id = req.params.id;
+  let query = "SELECT * FROM posts WHERE `id` = ?";
 
-  if (post.userId === req.params.userId || isAdmin ); */
- 
-  const q = 
-  
- // "DELETE FROM posts WHERE `id`=? AND `userId` = ? AND `isAdmin` ===1";
+  db.query(query, [post_id], (error, result)=>{
+    if(error) return result.status(404).json('Post not found');
+    let post = result[0];
 
-       "DELETE FROM posts WHERE `id`=?";  
- 
-      db.query(q, [req.params.id], (err, data) => {   
-       
-  //db.query(q, [req.params.id, req.user.id, isAdmin], (err, data) => {
-    if (err) return res.status(500).json(err);
-    if (data.affectedRows > 0)
-      return res.status(200).json("Post has been deleted.");
-    return res.status(403).json("You can delete only your post");
+    if(req.params.user_id == post.userId || req.user.isAdmin === 1){
+      const q = "DELETE FROM posts WHERE `id`=?";  
+      db.query(q, [post_id], (err, data) => { 
+        if (err) return res.status(500).json(err);
+        if (data.affectedRows > 0)
+          return res.status(200).json("Post has been deleted.");
+      
+      });
+    }
+    else{
+      return res.status(401).json("You do not have access to this resource.")
+    }
   });
+
 };
 
 export const updatePost = (req, res) => {
-  let file = req.file;
 
-  const fileName = `${v4()}.${file.originalname.split(".").splice(-1)[0]}`;
+  let post_id = req.params.id;
+  let query = "SELECT * FROM posts WHERE `id` = ?";
 
-  const url = path.normalize(
-    `${path.resolve(path.dirname(""))}../../frontend/public/upload/${fileName}`
-  );
+  db.query(query, [post_id], (error, result)=>{
+    if(error) return result.status(404).json('Post not found');
+    let post = result[0];
 
-  fs.writeFileSync(url, file.buffer, { flag: "w" });
-  const q = "UPDATE posts SET `desc`=?,`img`=? WHERE `id` =?";
-  db.query(q, [req.body.desc, fileName, req.params.id], (err, data) => {
-    if (err) res.status(500).json(err);
-    return res.status(200).json(data);
+    if(req.params.user_id == post.userId || req.user.isAdmin === 1){
+      let file = req.file;
+
+      const fileName = `${v4()}.${file.originalname.split(".").splice(-1)[0]}`;
+
+      const url = path.normalize(
+        `${path.resolve(path.dirname(""))}../../frontend/public/upload/${fileName}`
+      );
+
+      fs.writeFileSync(url, file.buffer, { flag: "w" });
+
+      const q = "UPDATE posts SET `desc`=?,`img`=? WHERE `id` =?";
+      db.query(q, [req.body.desc, fileName, req.params.id], (err, data) => {
+        if (err) res.status(500).json(err);
+        return res.status(200).json(data);
+      });
+    }
+    else{
+      return res.status(401).json("You do not have access to this resource.")
+    }
   });
+
+
+  
 };
