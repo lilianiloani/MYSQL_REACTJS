@@ -81,8 +81,7 @@ export const updatePost = (req, res) => {
   db.query(query, [post_id], (error, result) => {
     if (error) return result.status(404).json("Post not found");
     let post = result[0];
-
-    //let userId = req.params.user_id;
+    
     let userId = req.user.id;
     let isAdmin = 0;
     let user = "SELECT * FROM users WHERE `id` = ?";
